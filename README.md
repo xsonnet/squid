@@ -8,18 +8,18 @@
 #### 安装方法
 下载和安装
 ```
-$ go get -u gitee.com/nekocharm/squid
+$ go get -u github.com/xsonnet/squid
 ```
 导入到项目代码中
 ```
-import "gitee.com/nekocharm/squid"
+import "github.com/xsonnet/squid"
 ```
 
 #### 示例
 ```
 package main
 
-import "gitee.com/nekocharm/squid"
+import "github.com/xsonnet/squid"
 
 func main() {
 	app := squid.InitApp([]squid.Router{
