@@ -1,7 +1,6 @@
 package squid
 
 import (
-	"fmt"
 	"net/http"
 	"regexp"
 	"time"
@@ -21,7 +20,7 @@ func middleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		start := time.Now()
 		next.ServeHTTP(res, req)
-		fmt.Printf("[%s] %s (%v) \n", start.Format("2006-01-02 15:04:05") , req.URL.Path, time.Since(start))
+		Log("[%s] %s (%v) \n", start.Format("2006-01-02 15:04:05") , req.URL.Path, time.Since(start))
 	})
 }
 
@@ -65,6 +64,6 @@ func (app App) Handle(pattern string, handle http.Handler) {
 // 启动监听
 func (app App) Run(addr string) {
 	http.Handle("/", middleware(http.HandlerFunc(app.handleRouter)))
-	fmt.Println("Server started: " + addr)
+	Log("Server started: " + addr)
 	http.ListenAndServe(addr, nil)
 }
