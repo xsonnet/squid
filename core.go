@@ -20,7 +20,7 @@ func middleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		start := time.Now()
 		next.ServeHTTP(res, req)
-		Log("[%s] %s (%v) \n", start.Format("2006-01-02 15:04:05") , req.URL.Path, time.Since(start))
+		Log("%s (%v)", req.URL.Path, time.Since(start))
 	})
 }
 

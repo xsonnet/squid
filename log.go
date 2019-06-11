@@ -23,12 +23,12 @@ func Log(format string, arg ...interface{}) {
 			fmt.Println("Create log file error.")
 		}
 	}
-	file, err := os.OpenFile(path, os.O_APPEND, 0666)
+	file, err := os.OpenFile(path, os.O_APPEND|os.O_WRONLY, 0666)
 	defer file.Close()
 	if err != nil {
 		fmt.Println("Log error.")
 	}
-	file.Write([]byte(result))
+	file.WriteString(result)
 }
 
 func Exists(path string) bool {
