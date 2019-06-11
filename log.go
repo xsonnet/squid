@@ -13,9 +13,9 @@ func SetPath(p string) {
 }
 
 func Log(format string, arg ...interface{}) {
-	result := time.Now().Format("[2006-01-02 15:04:05] ")
+	result := time.Now().Format("\n [2006-01-02 15:04:05] ")
 	result += fmt.Sprintf(format, arg...)
-	fmt.Println(result)
+	fmt.Print(result)
 	if !Exists(path) {
 		file, err := os.Create(path)
 		defer file.Close()
