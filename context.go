@@ -46,9 +46,10 @@ func (ctx Context) Redirect(url string) {
 }
 
 func (ctx Context) SetSession(key string, value interface{}) error {
-	//option := session.SetCookieLifeTime(60 * 60 * 24 * 3)
-	//manager := session.NewManager(option)
-	store, err := session.Start(context.Background(), ctx.Response, ctx.Request)
+	option := session.SetExpired(60 * 60 * 24 * 7)
+	manager := session.NewManager(option)
+	store, err := manager.Start(context.Background(), ctx.Response, ctx.Request)
+	//store, err := session.Start(context.Background(), ctx.Response, ctx.Request)
 	if err != nil {
 		return err
 	}
