@@ -2,10 +2,13 @@ package squid
 
 import (
 	"context"
+	"crypto/rand"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"github.com/flosch/pongo2"
 	"github.com/go-session/session"
+	"io"
 	"net/http"
 )
 
@@ -46,8 +49,18 @@ func (ctx Context) Redirect(url string) {
 }
 
 func (ctx Context) SetSession(key string, value interface{}) error {
-	option := session.SetExpired(60 * 60 * 24 * 7)
-	manager := session.NewManager(option)
+	options := []session.Option{
+		session.SetCookieName("go_session_id"),
+		session.SetCookieLifeTime(3600 * 24 * 7),
+		session.SetExpired(3600 * 24 * 7),
+		session.SetSecure(true),
+		session.SetSessionID(func(_ context.Context) string {
+			return newUUID()
+		}),
+		session.SetEnableSetCookie(true),
+		session.SetEnableSIDInURLQuery(true),
+	}
+	manager := session.NewManager(options...)
 	store, err := manager.Start(context.Background(), ctx.Response, ctx.Request)
 	//store, err := session.Start(context.Background(), ctx.Response, ctx.Request)
 	if err != nil {
@@ -79,4 +92,24 @@ func (ctx Context) FlushSession() {
 		return
 	}
 	_ = store.Flush()
+}
+
+func newUUID() string {
+	var buf [16]byte
+	_, _ = io.ReadFull(rand.Reader, buf[:])
+	buf[6] = (buf[6] & 0x0f) | 0x40
+	buf[8] = (buf[8] & 0x3f) | 0x80
+
+	dst := make([]byte, 36)
+	hex.Encode(dst, buf[:4])
+	dst[8] = '-'
+	hex.Encode(dst[9:13], buf[4:6])
+	dst[13] = '-'
+	hex.Encode(dst[14:18], buf[6:8])
+	dst[18] = '-'
+	hex.Encode(dst[19:23], buf[8:10])
+	dst[23] = '-'
+	hex.Encode(dst[24:], buf[10:])
+
+	return string(dst)
 }
