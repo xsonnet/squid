@@ -49,18 +49,7 @@ func (ctx Context) Redirect(url string) {
 }
 
 func (ctx Context) SetSession(key string, value interface{}) error {
-	options := []session.Option{
-		session.SetCookieName("go_session_id"),
-		session.SetCookieLifeTime(3600 * 24 * 7),
-		session.SetExpired(3600 * 24 * 7),
-		session.SetSecure(true),
-		session.SetSessionID(func(_ context.Context) string {
-			return newUUID()
-		}),
-		session.SetEnableSetCookie(true),
-		session.SetEnableSIDInURLQuery(true),
-	}
-	manager := session.NewManager(options...)
+	manager := session.NewManager(session.SetExpired(60 * 60 * 24 * 7))
 	store, err := manager.Start(context.Background(), ctx.Response, ctx.Request)
 	//store, err := session.Start(context.Background(), ctx.Response, ctx.Request)
 	if err != nil {
