@@ -1,11 +1,8 @@
 package squid
 
 import (
-	"context"
 	"encoding/json"
-	"errors"
 	"github.com/flosch/pongo2"
-	"github.com/go-session/session"
 	"net/http"
 )
 
@@ -43,37 +40,4 @@ func (ctx Context) Json(data Params) {
 
 func (ctx Context) Redirect(url string) {
 	http.Redirect(ctx.Response, ctx.Request, url, http.StatusTemporaryRedirect)
-}
-
-func (ctx Context) SetSession(key string, value interface{}) error {
-	store := newStore(ctx)
-	store.Set(key, value)
-	err := store.Save()
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func (ctx Context) GetSession(key string) (string, error) {
-	store := newStore(ctx)
-	value, ok := store.Get(key)
-	if ok {
-		return value.(string), nil
-	}
-	return "", errors.New("session does not exist")
-}
-
-func (ctx Context) FlushSession() {
-	store := newStore(ctx)
-	_ = store.Flush()
-}
-
-func newStore(ctx Context) session.Store {
-	manager := session.NewManager(session.SetExpired(60 * 60 * 24 * 7))
-	store, err := manager.Start(context.Background(), ctx.Response, ctx.Request)
-	if err != nil {
-		return nil
-	}
-	return store
 }
